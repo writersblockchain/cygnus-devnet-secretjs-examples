@@ -7,8 +7,8 @@ const wallet = new Wallet(
     );
     
     const secretjs = new SecretNetworkClient({
-      chainId: "cygnus-3",
-      url: "http://57.151.81.199:1317",
+      chainId: "secretdev-1",
+      url: "http://20.121.117.166:1317",
       wallet: wallet,
       walletAddress: wallet.address,
     });

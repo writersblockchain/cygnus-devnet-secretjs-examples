@@ -10,8 +10,8 @@ process.env.MNEMONIC
 const contract_wasm = fs.readFileSync("../contract.wasm.gz");
 
 const secretjs = new SecretNetworkClient({
-  chainId: "cygnus-3",
-  url: "http://57.151.81.199:1317",
+  chainId: "secretdev-1",
+  url: "http://20.121.117.166:1317",
   wallet: wallet,
   walletAddress: wallet.address,
 });
@@ -31,32 +31,42 @@ let storeContract = async () => {
     }
   );
 
-  // Check if the transaction was successful
-  if (txStore.code !== TxResultCode.Success) {
-    console.error(txStore.rawLog);
-  }
+  console.log(txStore);
 
-  // Ensure that the transaction was successful
-  if (txStore.code !== TxResultCode.Success) {
-    throw new Error(`Failed to store contract: ${txStore.rawLog}`);
-  }
+//   // Check if the transaction was successful
+//   if (txStore.code !== TxResultCode.Success) {
+//     console.error(txStore.rawLog);
+//   }
 
-  // Extract the code_id from the transaction events
- const code_id = Number(getValueFromEvents(txStore.events, "message.code_id"));
-console.log("code_id: ", code_id);
+//   // Ensure that the transaction was successful
+//   if (txStore.code !== TxResultCode.Success) {
+//     throw new Error(`Failed to store contract: ${txStore.rawLog}`);
+//   }
 
-  // Query the code hash
+//   // Extract the code_id from the transaction events
+//  const code_id = Number(getValueFromEvents(txStore.events, "message.code_id"));
+// console.log("code_id: ", code_id);
+
+
+}
+// storeContract();
+
+let getCodehash = async () => {
+
+  let code_id = 7;
+
+    // Query the code hash
 const { code_hash } = await secretjs.query.compute.codeHashByCodeId({
         code_id: code_id,
       });
       console.log("code_hash: ", code_hash);
 }
-// storeContract();
+// getCodehash();
 
 let initContract = async () => {
 
-  let code_id = 0;
-  let code_hash = ""; 
+  let code_id = 7;
+  let code_hash = "b94ef8b7dadafa725f02a0a499de5f7853db74b7084af659d8ed11e237d28deb"; 
 
   // Instantiate the contract
   const txInit = await secretjs.tx.compute.instantiateContract(
@@ -73,23 +83,25 @@ let initContract = async () => {
     }
   );
 
-  // Check if the transaction was successful
-  if (txInit.code !== TxResultCode.Success) {
-    console.error(txInit.rawLog);
-    throw new Error(`Failed to instantiate contract: ${txInit.rawLog}`);
-  }
+  console.log(txInit);
 
-  // Verify the action in the events
-  const action = getValueFromEvents(txInit.events, "message.action");
-  if (action !== "/secret.compute.v1beta1.MsgInstantiateContract") {
-    throw new Error(`Unexpected action: ${action}`);
-  }
+//   // Check if the transaction was successful
+//   if (txInit.code !== TxResultCode.Success) {
+//     console.error(txInit.rawLog);
+//     throw new Error(`Failed to instantiate contract: ${txInit.rawLog}`);
+//   }
 
-  // Return the contract address from the events
-console.log(getValueFromEvents(txInit.events, "message.contract_address"));
+//   // Verify the action in the events
+//   const action = getValueFromEvents(txInit.events, "message.action");
+//   if (action !== "/secret.compute.v1beta1.MsgInstantiateContract") {
+//     throw new Error(`Unexpected action: ${action}`);
+//   }
+
+//   // Return the contract address from the events
+// console.log(getValueFromEvents(txInit.events, "message.contract_address"));
 }
 
-// initContract();
+initContract();
 
 // helper functions 
 function getValueFromEvents(events, key) {
@@ -107,5 +119,4 @@ function getValueFromEvents(events, key) {
 
   return "";
 }
-
 
